@@ -1,51 +1,58 @@
 // ------------------------------------- init  scene ------------------------------------- //
+const scene = new THREE.Scene()
+
 // ---- init camera
 // first parameter : cajuster le champ de vue
 // second parameter : taille de la fenetre
 // third parameter : temps
 // fourth paramter : stop le rendu si notre objet est trop loin ou trop près
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 0.1, 3000 );
+const camera = new THREE.PerspectiveCamera(35, window.innerWidth/window.innerHeight, 0.1, 3000)
+
 // ------ init rendu
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight ); // taille du rendu à la meme grosseur que la fenetre
- // couleur du rendu
+const rendu = new THREE.WebGLRenderer();
+rendu.setSize(window.innerWidth, window.innerHeight); // taille du rendu à la meme grosseur que la fenetre
+rendu.setClearColor(0x00000); // couleur du rendu
+
 //ajout du rendu dans notre document HTML
-document.body.appendChild( renderer.domElement);
+document.body.appendChild(rendu.domElement);
 
 // ------------------------------------- Deposer et creer la forme  ------------------------------------- //
+const forme = new THREE.Group();
+
 // creation de la forme en 3 dimensions
 // il prend 3 parametres
 // le premier : le rayon
 // le deuxieme : la grosseut du tube
 // la troiseieme : le nombre de segments
 // le 3eme: le nomnre de segments au long du tube
-const geometrie = new THREE.BoxGeometry(10, 3, 100);
+const geometrie = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+
 // creation du materiel avec une couleur par defaut en arc en ciel
 // seul le wireframe a true est important dans l'objet, le reste est deja dispo
-const material = new THREE.MeshBasicMaterial({
+const material = new THREE.MeshNormalMaterial({
     color: 0xff000,
-    // transparent: true,
-    // opacity: 1,
-    // wireframe: true,
-    // wireframeLinewidth: 5,
-    // wireframeLinejoin: 'round',
-    // wireframeLinecap: 'round'
+    transparent: true,
+    opacity: 1,
+    wireframe: true,
+    wireframeLinewidth: 5,
+    wireframeLinejoin: 'round',
+    wireframeLinecap: 'round'
 })
 
-// ajout de geometrie et material à notre forme
 const dessin = new THREE.Mesh( geometrie, material );
-// ajout de la forme sur la scene
-scene.add( dessin );
-camera.position.z = 100;
 
-// function animate() {
-//     requestAnimationFrame( animate );
+//ajout de geometrie et material à notre forme
+forme.add(dessin);
 
-//     cube.rotation.x += 0.01;
-//     cube.rotation.y += 0.01;
+//ajout de la forme sur la scene
+scene.add(forme);
 
-//     renderer.render( scene, camera );
-// };
+const animate = () => {
+    requestAnimationFrame( animate );
+    dessin.rotation.x += 0.005;
+    dessin.rotation.y += 0.005;
 
-// animate();
+    rendu.render(scene,camera);
+};
+
+animate();
